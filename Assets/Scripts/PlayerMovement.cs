@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
         Turn ();
     }
 
-    void Move (float h, float v) {
+    private void Move (float h, float v) {
         // Set the movement vector based on the axis input.
         this.movement.Set (h, 0f, v);
 
@@ -37,15 +37,32 @@ public class PlayerMovement : MonoBehaviour {
         this.playerRigidbody.MovePosition (this.transform.position + this.movement);
     }
 
-    void Turn () {
-        Ray cameraRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+    private void Turn () {
         RaycastHit cameraRayFloorHit;
-        if (Physics.Raycast (cameraRay, out cameraRayFloorHit, 100f, floorMask)) {
-            Vector3 playerToFloorHit = cameraRayFloorHit.point - this.transform.position;
-            playerToFloorHit.y = 0;
-
-            Quaternion playerRotation = Quaternion.LookRotation (playerToFloorHit);
-            this.playerRigidbody.MoveRotation (playerRotation);
+        if (isMouseOverFloor(out cameraRayFloorHit)) {
+            RotatePlayerToPosition (cameraRayFloorHit.point);
         }
+    }
+
+    /*
+     * Rotates the player rigidbody towards the intended target position Vector3.
+     */
+    private void RotatePlayerToPosition(Vector3 targetPosition) {
+        Vector3 playerRotationVector = targetPosition - this.transform.position;
+
+        // do not pitch the player position up/down
+        playerRotationVector.y = 0;
+
+        Quaternion playerRotationQuaternion = Quaternion.LookRotation (playerRotationVector);
+        this.playerRigidbody.MoveRotation (playerRotationQuaternion);
+    }
+
+    /*
+     * Returns true if the ray cast from the camera through the mouse position intersects
+     * the "Floor" layer.
+     */
+    private bool isMouseOverFloor(out RaycastHit raycastHit) {
+        Ray cameraRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+        return Physics.Raycast (cameraRay, out raycastHit, 100f, this.floorMask);
     }
 }
