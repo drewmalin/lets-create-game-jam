@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : EntityController {
 
     [SerializeField]
     private Weapon weapon;
@@ -11,18 +11,24 @@ public class EnemyController : MonoBehaviour {
     private float hitChance;
 
     private GameObject target;
+    private EntityController targetController;
     private NavMeshAgent agent;
     private bool targetInRange = false;
     private float deltaTime;
 
-	void Start () {
+	protected override void Start () {
+        base.Start ();
         this.target = GameObject.FindGameObjectWithTag ("Player");
+        this.targetController = target.GetComponent<PlayerController> ();
         this.agent = GetComponent<NavMeshAgent> ();
+        this.totalHealth = 30f;
+        this.health = totalHealth;
 	}
 	
-	void Update () {
+	protected override void Update () {
+        base.Update ();
         this.agent.SetDestination (this.target.transform.position);
-        if (this.targetInRange) {
+        if (!this.cantAttack && this.targetInRange) {
             Attack ();
         }
 	}
@@ -30,19 +36,23 @@ public class EnemyController : MonoBehaviour {
     void Attack () {
         if (deltaTime == 0f || deltaTime >= this.weapon.GetAttackSpeed()) {
             float hitRoll = Random.Range (0f, 1f);
+            float damage = 0f;
             if (hitRoll == 1f) {
                 // critical!
-                float damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage()) * 2;
+                damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage()) * 2;
                 Debug.Log(this.gameObject + " performs a critical hit on " + this.target + "for " + damage + " damage!");
             }
             else if (hitRoll <= this.hitChance) {
                 // hit!
-                float damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage());
+                damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage());
                 Debug.Log(this.gameObject + " hits " + this.target + " for " + damage + " damage!");
             }
             else {
                 // miss!
                 Debug.Log(this.gameObject + " misses " + this.target + "!");
+            }
+            if (damage != 0f) {
+                targetController.TakeDamage (damage);
             }
             deltaTime = 0f;
         }

@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : EntityController {
 
-    public float playerSpeed = 5.0f;
-
-    private Rigidbody playerRigidbody;
-    private Vector3 movement;
     private int floorMask;
 
     private PlayerInventory inventory;
@@ -16,37 +12,37 @@ public class PlayerController : MonoBehaviour {
         this.floorMask = LayerMask.GetMask ("Floor");
     }
 
-    void Start () {
-        this.playerRigidbody = GetComponent<Rigidbody> ();
+    protected override void Start () {
+        base.Start();
         this.inventory = GetComponent<PlayerInventory> ();
+        baseStats [Stat.Speed] = 5.0f;
+        totalHealth = 100.0f;
+        health = totalHealth;
     }
 
     void FixedUpdate () {
         float h = Input.GetAxisRaw ("Horizontal");
         float v = Input.GetAxisRaw ("Vertical");
 
-        Move (h, v);
-        Turn ();
+        if(!immobile) { 
+            Move (h, v); 
+        }
+        if(!fixedFacing) { 
+            Turn (); 
+        }
     }
 
-    void Update() {
+    protected override void Update() {
+        base.Update ();
         if (Input.GetMouseButton (1)) {
             Interact ();
         }
         if (Input.GetKeyDown (KeyCode.I)) {
             LogInventory ();
         }
-    }
-
-    private void Move (float h, float v) {
-        // Set the movement vector based on the axis input.
-        this.movement.Set (h, 0f, v);
-
-        // Normalize the movement vector and make it proportional to the speed per second.
-        this.movement = this.movement.normalized * this.playerSpeed * Time.deltaTime;
-
-        // Move the player to it's current position plus the movement.
-        this.playerRigidbody.MovePosition (this.transform.position + this.movement);
+        if (Input.GetKeyDown (KeyCode.U)) {
+            LogEntityStats ();
+        }
     }
 
     private void Turn () {
@@ -89,7 +85,7 @@ public class PlayerController : MonoBehaviour {
         playerRotationVector.y = 0;
 
         Quaternion playerRotationQuaternion = Quaternion.LookRotation (playerRotationVector);
-        this.playerRigidbody.MoveRotation (playerRotationQuaternion);
+        this.charRigidbody.MoveRotation (playerRotationQuaternion);
     }
 
     /*
