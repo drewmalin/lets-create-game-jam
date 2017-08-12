@@ -11,5 +11,9 @@ public enum Stat {
 
     Dexterity,
 
-    Constitution
+    Constitution,
+
+    Speed,
+
+    Damage
 }

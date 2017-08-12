@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : EntityController {
 
     [SerializeField]
     private Weapon weapon;
@@ -15,14 +15,18 @@ public class EnemyController : MonoBehaviour {
     private bool targetInRange = false;
     private float deltaTime;
 
-	void Start () {
+	protected override void Start () {
+        base.Start ();
         this.target = GameObject.FindGameObjectWithTag ("Player");
         this.agent = GetComponent<NavMeshAgent> ();
+        this.totalHealth = 30f;
+        this.health = totalHealth;
 	}
 	
-	void Update () {
+	protected override void Update () {
+        base.Update ();
         this.agent.SetDestination (this.target.transform.position);
-        if (this.targetInRange) {
+        if (!this.cantAttack && this.targetInRange) {
             Attack ();
         }
 	}
