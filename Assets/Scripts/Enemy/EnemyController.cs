@@ -28,23 +28,28 @@ public class EnemyController : MonoBehaviour {
 	}
 
     void Attack () {
+        float damage = 0;
         if (deltaTime == 0f || deltaTime >= this.weapon.GetAttackSpeed()) {
             float hitRoll = Random.Range (0f, 1f);
-            if (hitRoll == 1f) {
+            if (hitRoll >= .9f) {
                 // critical!
-                float damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage()) * 2;
+                damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage()) * 2;
                 Debug.Log(this.gameObject + " performs a critical hit on " + this.target + "for " + damage + " damage!");
             }
             else if (hitRoll <= this.hitChance) {
                 // hit!
-                float damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage());
+                damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage());
                 Debug.Log(this.gameObject + " hits " + this.target + " for " + damage + " damage!");
             }
             else {
                 // miss!
+                damage = 0;
                 Debug.Log(this.gameObject + " misses " + this.target + "!");
             }
             deltaTime = 0f;
+        }
+        if (damage > 0) {
+            this.target.GetComponent<PlayerController> ().TakeDamage (damage);
         }
         deltaTime += Time.deltaTime;
     }

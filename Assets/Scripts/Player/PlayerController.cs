@@ -38,6 +38,10 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void TakeDamage(float damageValue) {
+        DamagePopUpController.CreateDamagePopUp (damageValue, this.transform);
+    }
+
     private void Move (float h, float v) {
         // Set the movement vector based on the axis input.
         this.movement.Set (h, 0f, v);
