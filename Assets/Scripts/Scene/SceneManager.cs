@@ -9,8 +9,11 @@ public class SceneManager : MonoBehaviour {
 
     [SerializeField]
     private List<SpawnPoint> enemySpawnPoints;
+    [SerializeField]
+    private DamagePopUp damagePopUp;
 
 	void Start () {
+        DamagePopUpController.Initialize (this.damagePopUp);
         SpawnEnemies ();
 	}
 
