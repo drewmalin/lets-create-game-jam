@@ -15,4 +15,8 @@ public class Effect {
         this.modifier = mod;
         this.duration = duration;
     }
+
+    public bool HasExpired() {
+        return Time.time - this.start_time > this.duration;
+    }
 }

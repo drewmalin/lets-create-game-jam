@@ -43,28 +43,8 @@ public class EntityController : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update () {
-        // Remove expired Effects and their associated Modifiers
-        for (int i = currentEffects.Count - 1; i >= 0; i--) {
-            var e = currentEffects [i];
-            if (Time.time - e.start_time > e.duration) {
-                activeModifiers [e.modifier.stat].Remove (e.modifier);
-                currentEffects.RemoveAt (i);
-            }
-        }
-        // Calculate effective Stats from base and Modifiers
-        foreach (KeyValuePair<Stat, float> pair in baseStats) {
-            if (activeModifiers.ContainsKey (pair.Key)) {
-                float additive = 0f;
-                float multiplicative = 1f;
-                foreach (Modifier m in activeModifiers[pair.Key]) {
-                    additive += m.additive;
-                    multiplicative += m.multiplicative;
-                }
-                effectiveStats [pair.Key] = (pair.Value + additive) * multiplicative;
-            } else {
-                effectiveStats [pair.Key] = baseStats [pair.Key];
-            }
-        }
+        RemoveExpiredEffects();
+        CalculateEffectiveStats();
         // Check if dead
         if (health == 0f) {
             SetStun (true);
@@ -106,6 +86,32 @@ public class EntityController : MonoBehaviour {
 
         // Move the character to it's current position plus the movement.
         this.charRigidbody.MovePosition (this.transform.position + this.movement);
+    }
+
+    private void RemoveExpiredEffects() {
+        for (int i = currentEffects.Count - 1; i >= 0; i--) {
+            var e = currentEffects [i];
+            if (e.HasExpired()) {
+                activeModifiers [e.modifier.stat].Remove (e.modifier);
+                currentEffects.RemoveAt (i);
+            }
+        }
+    }
+
+    private void CalculateEffectiveStats() {
+        foreach (KeyValuePair<Stat, float> pair in baseStats) {
+            if (activeModifiers.ContainsKey (pair.Key)) {
+                float additive = 0f;
+                float multiplicative = 1f;
+                foreach (Modifier m in activeModifiers[pair.Key]) {
+                    additive += m.additive;
+                    multiplicative += m.multiplicative;
+                }
+                effectiveStats [pair.Key] = (pair.Value + additive) * multiplicative;
+            } else {
+                effectiveStats [pair.Key] = pair.Value;
+            }
+        }
     }
 
     /*
