@@ -93,6 +93,7 @@ public class EntityController : MonoBehaviour {
     }
 
     public void TakeDamage(float damage) {
+        DamagePopUpController.CreateDamagePopUp (damage, this.transform);
         health = Mathf.Max (health - damage, 0f);
     }
 

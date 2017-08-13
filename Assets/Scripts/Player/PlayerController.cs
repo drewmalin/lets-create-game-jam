@@ -45,21 +45,6 @@ public class PlayerController : EntityController {
         }
     }
 
-    public void TakeDamage(float damageValue) {
-        DamagePopUpController.CreateDamagePopUp (damageValue, this.transform);
-    }
-
-    private void Move (float h, float v) {
-        // Set the movement vector based on the axis input.
-        this.movement.Set (h, 0f, v);
-
-        // Normalize the movement vector and make it proportional to the speed per second.
-        this.movement = this.movement.normalized * this.playerSpeed * Time.deltaTime;
-
-        // Move the player to it's current position plus the movement.
-        this.playerRigidbody.MovePosition (this.transform.position + this.movement);
-    }
-
     private void Turn () {
         RaycastHit cameraRayFloorHit;
         if (RaycastCameraToMouse(out cameraRayFloorHit, this.floorMask)) {
