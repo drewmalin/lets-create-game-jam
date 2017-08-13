@@ -15,10 +15,14 @@ public class EntityController : MonoBehaviour {
     public float endStun;
     public float endFreeze;
 
-    public IDictionary<Stat, float> baseStats;
+    public StatValue strength;
+    public StatValue dexterity;
+    public StatValue constitution;
+    public StatValue speed;
+    public StatValue damage; 
+
+    public EntityStats myStats;
     public List<Effect> currentEffects;
-    public IDictionary<Stat, List<Modifier>> activeModifiers;
-    public IDictionary<Stat, float> effectiveStats;
 
     protected Rigidbody charRigidbody;
     protected Vector3 movement;
@@ -31,20 +35,17 @@ public class EntityController : MonoBehaviour {
         this.silent = false;
         this.cantAttack = false;
         this.currentEffects = new List<Effect> ();
-        this.baseStats = new Dictionary<Stat, float> ();
-        this.effectiveStats = new Dictionary<Stat, float> ();
-        this.activeModifiers = new Dictionary<Stat, List<Modifier>> ();
-        foreach (Stat s in System.Enum.GetValues(typeof(Stat))) {
-            baseStats [s] = 0f;
-            effectiveStats [s] = 0f;
-            activeModifiers [s] = new List<Modifier> ();
-        }
+        this.myStats = new EntityStats ();
+        this.myStats.SetBaseStat (strength.GetStat (), strength.GetValue ());
+        this.myStats.SetBaseStat (dexterity.GetStat (), dexterity.GetValue ());
+        this.myStats.SetBaseStat (constitution.GetStat (), constitution.GetValue ());
+        this.myStats.SetBaseStat (speed.GetStat (), speed.GetValue ());
+        this.myStats.SetBaseStat (damage.GetStat (), damage.GetValue ());
     }
 
     // Update is called once per frame
     protected virtual void Update () {
         RemoveExpiredEffects();
-        CalculateEffectiveStats();
         // Check if dead
         if (health == 0f) {
             SetStun (true);
@@ -69,7 +70,7 @@ public class EntityController : MonoBehaviour {
 
     public void ApplyEffect(Effect e) {
         currentEffects.Add (e);
-        activeModifiers [e.modifier.stat].Add (e.modifier);
+        myStats.AddModifier(e.modifier);
     }
 
     public void TakeDamage(float damage) {
@@ -82,7 +83,7 @@ public class EntityController : MonoBehaviour {
         this.movement.Set (h, 0f, v);
 
         // Normalize the movement vector and make it proportional to the speed per second.
-        this.movement = this.movement.normalized * effectiveStats[Stat.Speed] * Time.deltaTime;
+        this.movement = this.movement.normalized * myStats.GetEffectiveStat(Stat.Speed) * Time.deltaTime;
 
         // Move the character to it's current position plus the movement.
         this.charRigidbody.MovePosition (this.transform.position + this.movement);
@@ -92,27 +93,13 @@ public class EntityController : MonoBehaviour {
         for (int i = currentEffects.Count - 1; i >= 0; i--) {
             var e = currentEffects [i];
             if (e.HasExpired()) {
-                activeModifiers [e.modifier.stat].Remove (e.modifier);
+                myStats.RemoveModifier(e.modifier);
                 currentEffects.RemoveAt (i);
             }
         }
     }
 
-    private void CalculateEffectiveStats() {
-        foreach (KeyValuePair<Stat, float> pair in baseStats) {
-            if (activeModifiers.ContainsKey (pair.Key)) {
-                float additive = 0f;
-                float multiplicative = 1f;
-                foreach (Modifier m in activeModifiers[pair.Key]) {
-                    additive += m.additive;
-                    multiplicative += m.multiplicative;
-                }
-                effectiveStats [pair.Key] = (pair.Value + additive) * multiplicative;
-            } else {
-                effectiveStats [pair.Key] = pair.Value;
-            }
-        }
-    }
+
 
     /*
      * Short convenience functions for combination state changes
@@ -143,7 +130,7 @@ public class EntityController : MonoBehaviour {
     protected void LogEntityStats() {
         System.Text.StringBuilder sb = new System.Text.StringBuilder ();
         sb.AppendLine ("Entity Stats: ");
-        foreach (KeyValuePair<Stat, float> s in this.baseStats) {
+        foreach (KeyValuePair<Stat, float> s in myStats.baseStats) {
             sb.AppendLine (s.Key.ToString () + " (" + s.Value.ToString () + ")");
         }
         foreach (Stat s in System.Enum.GetValues(typeof(Stat))) {

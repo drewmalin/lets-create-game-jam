@@ -15,7 +15,6 @@ public class PlayerController : EntityController {
     protected override void Start () {
         base.Start();
         this.inventory = GetComponent<PlayerInventory> ();
-        baseStats [Stat.Speed] = 5.0f;
         totalHealth = 100.0f;
         health = totalHealth;
     }
