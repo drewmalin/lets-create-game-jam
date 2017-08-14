@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityStats : MonoBehaviour {
+public class EntityStats {
 
     public IDictionary<Stat, float> baseStats;
     public IDictionary<Stat, List<Modifier>> activeModifiers;
