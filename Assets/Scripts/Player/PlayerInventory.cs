@@ -72,7 +72,8 @@ public class PlayerInventory : MonoBehaviour {
 
     private void InstantiateItem (EquippableItem equippableItem) {
         Transform itemTransform = GetSlotTransform (equippableItem.GetSlot ());
-        Instantiate (equippableItem, itemTransform.position, itemTransform.rotation, this.transform);
+        Quaternion itemRotation = itemTransform.rotation * equippableItem.transform.rotation;
+        Instantiate (equippableItem, itemTransform.position, itemRotation, this.transform);
     }
 
     private void DestroyItem(EquippableItem equippableItem) {
