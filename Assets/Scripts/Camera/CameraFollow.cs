@@ -19,7 +19,7 @@ public class CameraFollow : MonoBehaviour {
         vectorToTarget = this.transform.position - this.cameraTarget.position;
     }
 
-	void Update () {
+	void FixedUpdate () {
         Vector3 targetCameraPosition = this.cameraTarget.position + this.vectorToTarget;
         transform.position = Vector3.Lerp (transform.position, targetCameraPosition, movementSmoothing * Time.deltaTime);
 	}
