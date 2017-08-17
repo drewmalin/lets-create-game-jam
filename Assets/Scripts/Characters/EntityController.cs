@@ -24,12 +24,14 @@ public class EntityController : MonoBehaviour {
     public EntityStats myStats;
     public List<Effect> currentEffects;
 
+    public Animator anim;
     protected Rigidbody charRigidbody;
     protected Vector3 movement;
 
     // Use this for initialization
     protected virtual void Start () {
         this.charRigidbody = GetComponent<Rigidbody> ();
+        this.anim = GetComponentInChildren<Animator> ();
         this.immobile = false;
         this.fixedFacing = false;
         this.silent = false;
@@ -81,6 +83,9 @@ public class EntityController : MonoBehaviour {
     protected void Move (float h, float v) {
         // Set the movement vector
         this.movement.Set (h, 0f, v);
+        if (this.anim != null) {
+            this.anim.SetBool ("runForward", true);
+        }
 
         // Normalize the movement vector and make it proportional to the speed per second.
         this.movement = this.movement.normalized * myStats.GetEffectiveStat(Stat.Speed) * Time.deltaTime;

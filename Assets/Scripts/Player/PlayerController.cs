@@ -23,8 +23,10 @@ public class PlayerController : EntityController {
         float h = Input.GetAxisRaw ("Horizontal");
         float v = Input.GetAxisRaw ("Vertical");
 
-        if(!immobile) { 
+        if (!immobile && (h != 0 || v != 0)) { 
             Move (h, v); 
+        } else {
+            this.anim.SetBool ("runForward", false);
         }
         if(!fixedFacing) { 
             Turn (); 
