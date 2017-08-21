@@ -27,6 +27,7 @@ public class EntityController : MonoBehaviour {
     public Animator anim;
     protected Rigidbody charRigidbody;
     protected Vector3 movement;
+    protected Vector3 facing;
 
     // Use this for initialization
     protected virtual void Start () {
@@ -36,6 +37,7 @@ public class EntityController : MonoBehaviour {
         this.fixedFacing = false;
         this.silent = false;
         this.cantAttack = false;
+        this.facing = new Vector3 (0, 0, -1f);
         this.currentEffects = new List<Effect> ();
         this.myStats = new EntityStats ();
         this.myStats.SetBaseStat (strength.GetStat (), strength.GetValue ());
@@ -83,12 +85,41 @@ public class EntityController : MonoBehaviour {
     protected void Move (float h, float v) {
         // Set the movement vector
         this.movement.Set (h, 0f, v);
+        Vector3 moveUnitVec = Vector3.Normalize (movement);
+        float dotProduct = Vector3.Dot (moveUnitVec, facing);
+        Vector3 crossProduct = Vector3.Cross (moveUnitVec, facing);
         if (this.anim != null) {
-            this.anim.SetBool ("runForward", true);
+            this.anim.SetBool ("playIdle", false);
+            if (dotProduct > 0.6) {
+                this.anim.SetBool ("runBackward", false);
+                this.anim.SetBool ("runForward", true);
+                this.anim.SetBool ("runRight", false);
+                this.anim.SetBool ("runLeft", false);
+            } else if (dotProduct < 0) {
+                this.anim.SetBool ("runBackward", true);
+                this.anim.SetBool ("runForward", false);
+                this.anim.SetBool ("runRight", false);
+                this.anim.SetBool ("runLeft", false);
+            } else if (Vector3.Dot (crossProduct, Vector3.up) > 0) {
+                this.anim.SetBool ("runBackward", false);
+                this.anim.SetBool ("runForward", false);
+                this.anim.SetBool ("runRight", false);
+                this.anim.SetBool ("runLeft", true);
+            } else {
+                this.anim.SetBool ("runBackward", false);
+                this.anim.SetBool ("runForward", false);
+                this.anim.SetBool ("runRight", true);
+                this.anim.SetBool ("runLeft", false);
+            }
         }
+        // If the player is moving and facing in different directions, penalize movement speed
+        float strafingPenalty = .75f + .25f * dotProduct;
 
-        // Normalize the movement vector and make it proportional to the speed per second.
-        this.movement = this.movement.normalized * myStats.GetEffectiveStat(Stat.Speed) * Time.deltaTime;
+        // Calculate the effective movement vector and make it proportional to the speed per second.
+        this.movement = moveUnitVec
+                        * myStats.GetEffectiveStat(Stat.Speed) 
+                        * strafingPenalty
+                        * Time.deltaTime;
 
         // Move the character to it's current position plus the movement.
         this.charRigidbody.MovePosition (this.transform.position + this.movement);

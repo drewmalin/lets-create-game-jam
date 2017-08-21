@@ -23,13 +23,13 @@ public class PlayerController : EntityController {
         float h = Input.GetAxisRaw ("Horizontal");
         float v = Input.GetAxisRaw ("Vertical");
 
-        if (!immobile && (h != 0 || v != 0)) { 
-            Move (h, v); 
-        } else {
-            this.anim.SetBool ("runForward", false);
-        }
         if(!fixedFacing) { 
             Turn (); 
+        }
+        if (!immobile && (h != 0 || v != 0)) { 
+            Move (h, v);
+        } else {
+            this.anim.SetBool ("playIdle", true);
         }
     }
 
@@ -80,12 +80,13 @@ public class PlayerController : EntityController {
      * Rotates the player rigidbody towards the intended target position Vector3.
      */
     private void RotatePlayerToPosition(Vector3 targetPosition) {
-        Vector3 playerRotationVector = targetPosition - this.transform.position;
+        facing = targetPosition - this.transform.position;
 
         // do not pitch the player position up/down
-        playerRotationVector.y = 0;
+        facing.y = 0;
+        facing.Normalize ();
 
-        Quaternion playerRotationQuaternion = Quaternion.LookRotation (playerRotationVector);
+        Quaternion playerRotationQuaternion = Quaternion.LookRotation (facing);
         this.charRigidbody.MoveRotation (playerRotationQuaternion);
     }
 
