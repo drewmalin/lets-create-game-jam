@@ -29,6 +29,8 @@ public class EntityController : MonoBehaviour {
     protected Vector3 movement;
     protected Vector3 facing;
 
+    public Collider damageArea;
+
     // Use this for initialization
     protected virtual void Start () {
         this.charRigidbody = GetComponent<Rigidbody> ();
@@ -135,7 +137,26 @@ public class EntityController : MonoBehaviour {
         }
     }
 
+    public void SetDamageArea(Collider area) {
+        GameObject damageAreaGO = this.transform.Find ("DamageArea").gameObject;
+        // TODO: This cannot be the right way to do this. 
+        // Maybe transfer attributes of area to DamageArea's collider
+        // Destroy (damageAreaGO.GetComponent<Collider>());
+        // Collider justAdded = damageAreaGO.AddComponent<Collider> () as Collider;
+        this.damageArea = area;
+    }
 
+    /*
+     * Activates the DamageArea currently attached to the Entity
+     */
+    protected void ActivateDamageArea(float damageAmount) {
+        GetComponentInChildren<DamageArea> ().damage = damageAmount;
+        this.damageArea.enabled = true;
+    }
+
+    protected void DisableDamageArea() {
+        this.damageArea.enabled = false;
+    }
 
     /*
      * Short convenience functions for combination state changes

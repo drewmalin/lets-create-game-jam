@@ -38,6 +38,12 @@ public class PlayerController : EntityController {
         if (Input.GetMouseButton (1)) {
             Interact ();
         }
+        if (Input.GetMouseButton (0)) {
+            // for development only. need a system to choose what action to take based on equipped weapon
+            ActivateDamageArea (10f);
+        } else {
+            DisableDamageArea ();
+        }
         if (Input.GetKeyDown (KeyCode.I)) {
             LogInventory ();
         }

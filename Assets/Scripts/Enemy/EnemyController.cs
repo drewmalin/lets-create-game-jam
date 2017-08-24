@@ -25,9 +25,13 @@ public class EnemyController : EntityController {
 	
 	protected override void Update () {
         base.Update ();
-        this.agent.SetDestination (this.target.transform.position);
-        if (!this.cantAttack && this.targetInRange) {
-            Attack ();
+        if (health != 0f) {
+            this.agent.SetDestination (this.target.transform.position);
+            if (!this.cantAttack && this.targetInRange) {
+                Attack ();
+            }
+        } else {
+            this.agent.SetDestination (this.transform.position);
         }
 	}
 
