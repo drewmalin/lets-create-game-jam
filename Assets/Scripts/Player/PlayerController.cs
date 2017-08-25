@@ -73,12 +73,12 @@ public class PlayerController : EntityController {
         if (!itemContainer.IsEmpty() && 
             Vector3.Distance(this.transform.position, itemContainer.transform.position) <= itemContainer.GetInteractionRadius()) {
 
-            EquippableItem item = itemContainer.GetItems()[0] as EquippableItem;
-            if (item) {
-                itemContainer.TakeItem (item);
+            itemContainer.OpenUI ((item) => {
                 this.inventory.AddItem (item);
-                this.inventory.Equip (item);
-            }
+                if (item is EquippableItem) {
+                    this.inventory.Equip (item as EquippableItem);
+                }
+            });
         }
     }
 

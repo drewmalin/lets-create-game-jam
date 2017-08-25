@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * A GameObject which contains items.
@@ -36,5 +37,33 @@ public class ItemContainer : MonoBehaviour {
 
     public bool IsEmpty() {
         return this.items.Count == 0;
+    }
+
+    public List<Item> GetAllItems() {
+        return this.items;
+    }
+
+    public void OpenUI(System.Action<Item> onTakeItemAction) {
+        ItemContainerUI itemContainerUI = GameObject.Find ("ItemContainerUI").GetComponent<ItemContainerUI> ();
+
+        if (itemContainerUI.IsOpen ()) {
+            return;
+        }
+
+        itemContainerUI.Open (); // must be made active prior to all subsequent calls
+        itemContainerUI.AddItems (GetAllItems ());
+        itemContainerUI.SetItemSelectionAction ((item) => {
+
+            // by default, remove the item from the container and UI
+            TakeItem (item);
+            itemContainerUI.RemoveItem (item);
+
+            if (IsEmpty()) {
+                itemContainerUI.Close();
+            }
+
+            // custom behavior
+            onTakeItemAction.Invoke(item);
+        });
     }
 }
