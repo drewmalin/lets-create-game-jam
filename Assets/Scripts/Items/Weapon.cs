@@ -5,11 +5,11 @@ using UnityEngine;
 public class Weapon : EquippableItem {
 
     [SerializeField]
-    private float minDamage;
+    protected float minDamage;
     [SerializeField]
-    private float maxDamage;
+    protected float maxDamage;
     [SerializeField]
-    private float attackSpeed;
+    protected float attackSpeed;
 
     public float GetMinDamage() {
         return this.minDamage;
@@ -25,5 +25,9 @@ public class Weapon : EquippableItem {
 
     public float GetDamagePerSecond() {
         return (((this.maxDamage + this.minDamage) / 2 ) / this.attackSpeed);
+    }
+
+    virtual public void Attack(Vector3 startFrom, Vector3 direction) {
+
     }
 }
