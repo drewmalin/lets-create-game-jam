@@ -30,6 +30,10 @@ public class PlayerController : EntityController {
             Move (h, v);
         } else {
             this.anim.SetBool ("playIdle", true);
+            this.anim.SetBool ("runForward", false);
+            this.anim.SetBool ("runBackward", false);
+            this.anim.SetBool ("runLeft", false);
+            this.anim.SetBool ("runRight", false);
         }
     }
 
