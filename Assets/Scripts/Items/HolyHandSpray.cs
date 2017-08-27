@@ -12,7 +12,7 @@ public class HolyHandSpray : Weapon {
         this.attackSpeed = 0.2f;
 	}
 	
-    public override void Attack(Vector3 startFrom, Vector3 direction) {
+    public override void Attack() {
         AreaOfEffect.enabled = true;
     }
 }

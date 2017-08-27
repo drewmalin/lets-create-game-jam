@@ -27,7 +27,7 @@ public class Weapon : EquippableItem {
         return (((this.maxDamage + this.minDamage) / 2 ) / this.attackSpeed);
     }
 
-    virtual public void Attack(Vector3 startFrom, Vector3 direction) {
-
+    virtual public void Attack() {
+        Debug.Log ("attack with " + this + "!");
     }
 }

@@ -25,6 +25,17 @@ public class PlayerInventory : MonoBehaviour {
         return this.equipped.Values.ToList();
     }
 
+    public EquippableItem GetItemInSlot(InventorySlot slot) {
+        EquippableItem item;
+        if (this.equipped.TryGetValue (slot, out item)) {
+            return item;
+        } 
+        else {
+            // todo: throw exception/return empty wrapper
+            return null;
+        }
+    }
+
     /*
      * Adds the provided item to the player inventory. No-ops if the item is null.
      */
@@ -54,8 +65,8 @@ public class PlayerInventory : MonoBehaviour {
         if (equippableItem == null || !this.items.Contains (equippableItem)) {
             return;
         }
-        this.equipped.Add (equippableItem.GetSlot (), equippableItem);
-        InstantiateItem (equippableItem);
+        EquippableItem instantiatedItem = InstantiateItem (equippableItem);
+        this.equipped.Add (equippableItem.GetSlot (), instantiatedItem);
     }
 
     /*
@@ -70,10 +81,10 @@ public class PlayerInventory : MonoBehaviour {
         DestroyItem (equippableItem);
     }
 
-    private void InstantiateItem (EquippableItem equippableItem) {
+    private EquippableItem InstantiateItem (EquippableItem equippableItem) {
         Transform itemTransform = GetSlotTransform (equippableItem.GetSlot ());
         Quaternion itemRotation = itemTransform.rotation * equippableItem.transform.rotation;
-        Instantiate (equippableItem, itemTransform.position, itemRotation, this.transform);
+        return Instantiate (equippableItem, itemTransform.position, itemRotation, this.transform);
     }
 
     private void DestroyItem(EquippableItem equippableItem) {

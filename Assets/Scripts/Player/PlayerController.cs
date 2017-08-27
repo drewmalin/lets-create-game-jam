@@ -35,14 +35,11 @@ public class PlayerController : EntityController {
 
     protected override void Update() {
         base.Update ();
-        if (Input.GetMouseButton (1)) {
+        if (Input.GetMouseButtonDown (1)) {
             Interact ();
         }
-        if (Input.GetMouseButton (0)) {
-            // for development only. need a system to choose what action to take based on equipped weapon
-            ActivateDamageArea (10f);
-        } else {
-            DisableDamageArea ();
+        if (Input.GetMouseButtonDown (0) && IsWeaponEquipped()) {
+            SwingWeapon();
         }
         if (Input.GetKeyDown (KeyCode.I)) {
             LogInventory ();
@@ -50,6 +47,17 @@ public class PlayerController : EntityController {
         if (Input.GetKeyDown (KeyCode.U)) {
             LogEntityStats ();
         }
+    }
+
+    private bool IsWeaponEquipped () {
+        EquippableItem rightHandItem = this.inventory.GetItemInSlot(InventorySlot.RightHand);
+        EquippableItem leftHandItem = this.inventory.GetItemInSlot (InventorySlot.LeftHand);
+        return (rightHandItem && rightHandItem is Weapon) || (leftHandItem && leftHandItem is Weapon);
+    }
+
+    private void SwingWeapon() {
+        Weapon weapon = this.inventory.GetItemInSlot (InventorySlot.RightHand) as Weapon;
+        weapon.Attack ();
     }
 
     private void Turn () {
