@@ -54,6 +54,9 @@ public class EntityController : MonoBehaviour {
         RemoveExpiredEffects();
         // Check if dead
         if (health == 0f) {
+            foreach(Collider c in GetComponents<Collider> ()) {
+                c.enabled = false;
+            }
             SetStun (true);
             // temporary...
             Quaternion deathRotationQuaternion = Quaternion.LookRotation (new Vector3(0f, -1f, 0f));

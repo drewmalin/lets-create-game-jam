@@ -17,6 +17,15 @@ public class Sword : Weapon {
     }
 
     void OnTriggerEnter(Collider target) {
-        Debug.Log ("hit " + target.name + "!");
+        EnemyController enemy = target.GetComponent<EnemyController> ();
+        if (!enemy) {
+            // todo: super-awesome destructible environments...
+            return;
+        }
+        float damage = Random.Range (GetMinDamage(), GetMaxDamage());
+        if (damage > 0) {
+            Debug.Log (this.gameObject + " hits " + target + " for " + damage + " damage!");
+            enemy.TakeDamage (damage);
+        }
     }
 }
