@@ -24,7 +24,6 @@ public class Sword : Weapon {
         }
         float damage = Random.Range (GetMinDamage(), GetMaxDamage());
         if (damage > 0) {
-            Debug.Log (this.gameObject + " hits " + target + " for " + damage + " damage!");
             enemy.TakeDamage (damage);
         }
     }

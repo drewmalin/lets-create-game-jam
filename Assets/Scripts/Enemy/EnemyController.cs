@@ -42,17 +42,17 @@ public class EnemyController : EntityController {
             if (hitRoll >= .9f) {
                 // critical!
                 damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage()) * 2;
-                Debug.Log(this.gameObject + " performs a critical hit on " + this.target + "for " + damage + " damage!");
+//                Debug.Log(this.gameObject + " performs a critical hit on " + this.target + "for " + damage + " damage!");
             }
             else if (hitRoll <= this.hitChance) {
                 // hit!
                 damage = Random.Range (this.weapon.GetMinDamage(), this.weapon.GetMaxDamage());
-                Debug.Log(this.gameObject + " hits " + this.target + " for " + damage + " damage!");
+//                Debug.Log(this.gameObject + " hits " + this.target + " for " + damage + " damage!");
             }
             else {
                 // miss!
                 damage = 0;
-                Debug.Log(this.gameObject + " misses " + this.target + "!");
+//                Debug.Log(this.gameObject + " misses " + this.target + "!");
             }
             deltaTime = 0f;
         }
