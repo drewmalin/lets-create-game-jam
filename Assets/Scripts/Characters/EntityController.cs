@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class EntityController : MonoBehaviour {
+
+    public Slider healthSlider;
 
     public float health { get; set; }
     public float totalHealth { get; set; }
@@ -85,6 +88,7 @@ public class EntityController : MonoBehaviour {
     public void TakeDamage(float damage) {
         DamagePopUpController.CreateDamagePopUp (damage, this.transform);
         health = Mathf.Max (health - damage, 0f);
+        this.healthSlider.value = health;
     }
 
     protected void Move (float h, float v) {
